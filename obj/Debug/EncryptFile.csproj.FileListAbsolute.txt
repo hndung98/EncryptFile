@@ -1,0 +1,10 @@
+C:\Users\ASUS\source\repos\EncryptFile\EncryptFile\bin\Debug\EncryptFile.exe.config
+C:\Users\ASUS\source\repos\EncryptFile\EncryptFile\bin\Debug\EncryptFile.exe
+C:\Users\ASUS\source\repos\EncryptFile\EncryptFile\bin\Debug\EncryptFile.pdb
+C:\Users\ASUS\source\repos\EncryptFile\EncryptFile\obj\Debug\EncryptFile.csprojAssemblyReference.cache
+C:\Users\ASUS\source\repos\EncryptFile\EncryptFile\obj\Debug\EncryptFile.Form1.resources
+C:\Users\ASUS\source\repos\EncryptFile\EncryptFile\obj\Debug\EncryptFile.Properties.Resources.resources
+C:\Users\ASUS\source\repos\EncryptFile\EncryptFile\obj\Debug\EncryptFile.csproj.GenerateResource.cache
+C:\Users\ASUS\source\repos\EncryptFile\EncryptFile\obj\Debug\EncryptFile.csproj.CoreCompileInputs.cache
+C:\Users\ASUS\source\repos\EncryptFile\EncryptFile\obj\Debug\EncryptFile.exe
+C:\Users\ASUS\source\repos\EncryptFile\EncryptFile\obj\Debug\EncryptFile.pdb
