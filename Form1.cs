@@ -14,6 +14,8 @@ namespace EncryptFile
 {
     public partial class Form1 : Form
     {
+        private static byte[] IV = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+        private static int BlockSize = 128;
         public Form1()
         {
             InitializeComponent();
@@ -35,37 +37,25 @@ namespace EncryptFile
         {
             if (txtPassword.Text.Length != 0)
             {
-                byte password = byte.Parse(txtPassword.Text);
+                //byte password = byte.Parse(txtPassword.Text);
                 if (File.Exists(txtFilePath.Text))
                 {
-                    FileStream fsInput = new FileStream(txtFilePath.Text, FileMode.Open);
+                    String inputFileName = txtFilePath.Text;
                     String outputFileName = Path.GetDirectoryName(txtFilePath.Text);
                     outputFileName += "\\" + Path.GetFileNameWithoutExtension(txtFilePath.Text);
-                    outputFileName += "_Encrypted" + Path.GetExtension(txtFilePath.Text);
-
-                    MessageBox.Show(outputFileName);
-                    FileStream fsOutput = new FileStream(outputFileName, FileMode.Create);
-
-                    for (long i = 0; i < fsInput.Length; i++)
-                    {
-                        byte temp = (byte)fsInput.ReadByte();
-                        temp += password;
-                        fsOutput.WriteByte(temp);
-                    }
-
-                    fsOutput.Close();
-                    fsOutput.Dispose();
-                    fsInput.Close();
-                    fsInput.Dispose();
+                    outputFileName += "_AES_Encrypted" + Path.GetExtension(txtFilePath.Text);
+                    //AES_Encrypt(inputFileName, outputFileName, txtPassword.Text);
+                    AES_Encrypt(inputFileName, outputFileName, txtPassword.Text);
+                    
                 }
                 else
                 {
-                    MessageBox.Show("No Path");
+                    MessageBox.Show("This path is not found!");
                 }
             }
             else
             {
-                MessageBox.Show("Nhap password!");
+                MessageBox.Show("Please type password!");
                 
             }
         }
@@ -74,37 +64,34 @@ namespace EncryptFile
         {
             if (txtPassword.Text.Length != 0)
             {
-                byte password = byte.Parse(txtPassword.Text);
+                //byte password = byte.Parse(txtPassword.Text);
                 if (File.Exists(txtFilePath.Text))
                 {
-                    FileStream fsInput = new FileStream(txtFilePath.Text, FileMode.Open);
+                    String inputFileName = txtFilePath.Text;
                     String outputFileName = Path.GetDirectoryName(txtFilePath.Text);
                     outputFileName += "\\" + Path.GetFileNameWithoutExtension(txtFilePath.Text);
-                    outputFileName += "_Decrypted" + Path.GetExtension(txtFilePath.Text);
-
-                    MessageBox.Show(outputFileName);
-                    FileStream fsOutput = new FileStream(outputFileName, FileMode.Create);
-
-                    for (long i = 0; i < fsInput.Length; i++)
+                    outputFileName += "_AES_Decrypted" + Path.GetExtension(txtFilePath.Text);
+                    try
                     {
-                        byte temp = (byte)fsInput.ReadByte();
-                        temp -= password;
-                        fsOutput.WriteByte(temp);
+                        AES_Decrypt(inputFileName, outputFileName, txtPassword.Text);
+                        MessageBox.Show(outputFileName);
                     }
-
-                    fsOutput.Close();
-                    fsOutput.Dispose();
-                    fsInput.Close();
-                    fsInput.Dispose();
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Can not decrypt\n");
+                        MessageBox.Show(ex.ToString());
+                    }
+                    
+                    
                 }
                 else
                 {
-                    MessageBox.Show("No Path");
+                    MessageBox.Show("This path is not found!");
                 }
             }
             else
             {
-                MessageBox.Show("Nhap password!");
+                MessageBox.Show("{Please type password!");
 
             }
         }
@@ -204,6 +191,54 @@ namespace EncryptFile
             fsOutput.Close();
             fsInput.Close();
         }
+        public static void AES_Encrypt(string iFile, string oFile, string password)
+        {
+            FileStream fsInput = new FileStream(iFile, FileMode.Open, FileAccess.Read);
+            FileStream fsOutput = new FileStream(oFile, FileMode.Create, FileAccess.Write);
+            SymmetricAlgorithm crypt = Aes.Create();
+            HashAlgorithm hash = MD5.Create();
+            crypt.BlockSize = BlockSize;
+            crypt.Key = hash.ComputeHash(Encoding.Unicode.GetBytes(password));
+            crypt.IV = IV;
+
+            using (CryptoStream cryptoStream =
+                   new CryptoStream(fsOutput, crypt.CreateEncryptor(), CryptoStreamMode.Write))
+            {
+                int bufferLenght = 4096;
+                byte[] buffer = new byte[bufferLenght];
+                int bytesRead;
+                do
+                {
+                    bytesRead = fsInput.Read(buffer, 0, bufferLenght);
+                    cryptoStream.Write(buffer, 0, bytesRead);
+                } while (bytesRead != 0);
+            }
+            //end
+            return;
+        }
+        public static void AES_Decrypt(string iFile, string oFile, string password)
+        {
+            FileStream fsInput = new FileStream(iFile, FileMode.Open, FileAccess.Read);
+            FileStream fsOutput = new FileStream(oFile, FileMode.Create, FileAccess.Write);
+            SymmetricAlgorithm crypt = Aes.Create();
+            HashAlgorithm hash = MD5.Create();
+            crypt.BlockSize = BlockSize;
+            crypt.Key = hash.ComputeHash(Encoding.Unicode.GetBytes(password));
+            crypt.IV = IV;
+
+            using (CryptoStream cryptoStream =
+                   new CryptoStream(fsOutput, crypt.CreateDecryptor(), CryptoStreamMode.Write))
+            {
+                int bufferLenght = 4096;
+                byte[] buffer = new byte[bufferLenght];
+                int bytesRead;
+                do
+                {
+                    bytesRead = fsInput.Read(buffer, 0, bufferLenght);
+                    cryptoStream.Write(buffer, 0, bytesRead);
+                } while (bytesRead != 0);
+            }
+        }
 
         private void BtnLinkDES_Click(object sender, EventArgs e)
         {
@@ -227,31 +262,15 @@ namespace EncryptFile
                     outputFileName += "_DES_Encrypted" + Path.GetExtension(inputFileName);
                     MessageBox.Show(outputFileName);
                     DES_Encrypt(inputFileName, outputFileName, password);
-                    //FileStream fsInput = new FileStream(txtFilePath.Text, FileMode.Open);
-                    //String outputFileName = Path.GetDirectoryName(txtFilePath.Text);
-                    //outputFileName += "\\" + Path.GetFileNameWithoutExtension(txtFilePath.Text);
-                    //outputFileName += "_Encrypted" + Path.GetExtension(txtFilePath.Text);
-                    //MessageBox.Show(outputFileName);
-                    //FileStream fsOutput = new FileStream(outputFileName, FileMode.Create);
-                    //for (long i = 0; i < fsInput.Length; i++)
-                    //{
-                    //    byte temp = (byte)fsInput.ReadByte();
-                    //    temp += password;
-                    //    fsOutput.WriteByte(temp);
-                    //}
-                    //fsOutput.Close();
-                    //fsOutput.Dispose();
-                    //fsInput.Close();
-                    //fsInput.Dispose();
                 }
                 else
                 {
-                    MessageBox.Show("No Path");
+                    MessageBox.Show("This Path is not found!");
                 }
             }
             else
             {
-                MessageBox.Show("Nhap password!");
+                MessageBox.Show("Please type password!");
 
             }
         }
@@ -274,18 +293,18 @@ namespace EncryptFile
                         MessageBox.Show(outputFileName);
                     } catch(Exception ex)
                     {
+                        MessageBox.Show("Can not decrypt\n");
                         MessageBox.Show(ex.ToString());
                     }
-                    //DES_Decrypt(inputFileName, outputFileName, password);
                 }
                 else
                 {
-                    MessageBox.Show("No Path");
+                    MessageBox.Show("This Path is not found!");
                 }
             }
             else
             {
-                MessageBox.Show("Nhap password!");
+                MessageBox.Show("Please type password!");
 
             }
         }
