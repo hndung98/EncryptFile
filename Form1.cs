@@ -84,7 +84,7 @@ namespace EncryptFile
                         AES_Encrypt(outputFileName, outputFileName2, tbxPasswordAES.Text);
                         string hashValueA = CheckMD5(inputFileName);
                         string hashValueB = CheckMD5(outputFileName2);
-                        //File.Delete(outputFileName2);
+                        File.Delete(outputFileName2);
                         if (hashValueA.Equals(hashValueB))
                         {
                             MessageBox.Show("AES_Decrypt Successfully!");
@@ -313,10 +313,10 @@ namespace EncryptFile
                         String outputFileName2 = Path.GetDirectoryName(outputFileName);
                         outputFileName2 += "\\" + Path.GetFileNameWithoutExtension(outputFileName);
                         outputFileName2 += "2" + Path.GetExtension(outputFileName);
-                        DES_Encrypt(outputFileName, outputFileName2, tbxPasswordAES.Text);
+                        DES_Encrypt(outputFileName, outputFileName2, tbxPasswordDES.Text);
                         string hashValueA = CheckMD5(inputFileName);
                         string hashValueB = CheckMD5(outputFileName2);
-                        //File.Delete(outputFileName2);
+                        File.Delete(outputFileName2);
                         if (hashValueA.Equals(hashValueB))
                         {
                             MessageBox.Show("DES_Decrypt Successfully!");
@@ -413,7 +413,7 @@ namespace EncryptFile
                 ciphertext = BitConverter.ToString(encrypted);
                 string outputFileName = Path.GetDirectoryName(tbxFilePathRSA.Text);
                 outputFileName += "\\" + Path.GetFileNameWithoutExtension(tbxFilePathRSA.Text);
-                outputFileName += "_RSAEncrypt" + Path.GetExtension(tbxFilePathRSA.Text);
+                outputFileName += "_RSA_Encrypt" + Path.GetExtension(tbxFilePathRSA.Text);
                 tbxTemp.Text = ciphertext;
                 string path = @"D:\BKU\HK192\Mat ma an ninh mang\ass1\KeyEncode.txt";
                 //using (StreamWriter sw = new StreamWriter(path))
@@ -478,7 +478,7 @@ namespace EncryptFile
                 tbxTemp2.Text = plaintext;
                 string outputFileName = Path.GetDirectoryName(tbxFilePathRSA.Text);
                 outputFileName += "\\" + Path.GetFileNameWithoutExtension(tbxFilePathRSA.Text);
-                outputFileName += "_RSADecrypt" + Path.GetExtension(tbxFilePathRSA.Text);
+                outputFileName += "_RSA_Decrypt" + Path.GetExtension(tbxFilePathRSA.Text);
                 using (StreamWriter sw = new StreamWriter(outputFileName))
                 {
                     sw.WriteLine(plaintext);
